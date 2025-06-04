@@ -1,0 +1,135 @@
+[build-system]
+# Should be mirrored in requirements/build.txt (or adapted for kernels)
+requires = [
+    "cmake>=3.26",
+    "ninja",
+    "packaging>=24.2",
+    "setuptools>=77.0.3,<80.0.0",
+    "setuptools-scm>=8.0",
+    "torch >= 2.7.0", # Kernel compilation will need torch
+    "wheel",
+    "jinja2",
+]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "vllm-kernels"
+authors = [{name = "vLLM Team"}]
+license = "Apache-2.0"
+# license-files = ["LICENSE"] # TODO: Ensure LICENSE file is present or path adjusted
+# readme = "README.md" # TODO: Ensure README.md is present or path adjusted
+description = "Custom C++/CUDA kernels and operators for the vLLM inference engine"
+classifiers = [
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Information Technology",
+    "Intended Audience :: Science/Research",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Scientific/Engineering :: Information Analysis",
+]
+requires-python = ">=3.9,<3.13"
+dynamic = [ "version", "dependencies", "optional-dependencies"]
+
+[project.urls]
+Homepage="https://github.com/vllm-project/vllm"
+Documentation="https://vllm.readthedocs.io/en/latest/"
+Slack="http://slack.vllm.ai/"
+
+# No scripts for vllm-kernels directly, entrypoints are in vllm-engine
+
+[tool.setuptools_scm]
+# no extra settings needed, presence enables setuptools-scm
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["vllm_kernels*"] # Python package will be vllm_kernels
+
+[tool.yapfignore]
+ignore_patterns = [
+    "build/**",
+]
+
+[tool.ruff]
+# Allow lines to be as long as 80.
+line-length = 80
+exclude = [
+    # External file, leaving license intact
+    # "examples/other/fp8/quantizer/quantize.py", # Path likely not relevant here
+    # "vllm/vllm_flash_attn/flash_attn_interface.pyi" # Path likely not relevant here
+]
+
+[tool.ruff.lint.per-file-ignores]
+# "vllm/third_party/**" = ["ALL"] # Paths will need checking if third_party code is part of kernels
+# "vllm/version.py" = ["F401"]
+# "vllm/_version.py" = ["ALL"]
+# Python 3.8 typing. TODO: Remove these excludes after v1.0.0 # Paths likely not relevant here for vllm_kernels specific code yet
+
+[tool.ruff.lint]
+select = [
+    # pycodestyle
+    "E",
+    # Pyflakes
+    "F",
+    # pyupgrade
+    "UP",
+    # flake8-bugbear
+    "B",
+    # flake8-simplify
+    "SIM",
+    # isort
+    # "I",
+    "G",
+]
+ignore = [
+    # star imports
+    "F405", "F403",
+    # lambda expression assignment
+    "E731",
+    # Loop control variable not used within loop body
+    "B007",
+    # f-string format
+    "UP032",
+    # Can remove once 3.10+ is the minimum Python version
+    "UP007",
+]
+
+[tool.mypy]
+ignore_missing_imports = true
+check_untyped_defs = true
+follow_imports = "silent"
+
+# files = [ # TODO: Adjust for vllm_kernels package
+#     "vllm_kernels/*.py",
+# ]
+# exclude = [ # TODO: Adjust for vllm_kernels package
+# ]
+
+[tool.codespell]
+ignore-words-list = "dout, te, indicies, subtile, ElementE"
+# skip = "tests/models/fixtures/*,tests/prompts/*,benchmarks/sonnet.txt,tests/lora/data/*,build/*,vllm/third_party/*" # Paths will need adjustment
+
+[tool.isort]
+use_parentheses = true
+skip_gitignore = true
+
+[tool.pytest.ini_options]
+markers = [
+    "skip_global_cleanup",
+    "core_model: enable this model test in each PR instead of only nightly",
+    "cpu_model: enable this model test in CPU tests",
+    "split: run this test as part of a split",
+    "distributed: run this test only in distributed GPU tests",
+    "skip_v1: do not run this test with v1",
+    "optional: optional tests that are automatically skipped, include --optional to run them",
+]
+
+[tool.pymarkdown]
+plugins.md004.style = "sublist" # ul-style
+plugins.md013.enabled = false # line-length
+plugins.md041.enabled = false # first-line-h1
+plugins.md033.enabled = false # inline-html
+plugins.md024.allow_different_nesting = true # no-duplicate-headers
+
