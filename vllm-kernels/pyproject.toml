@@ -1,0 +1,40 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel", "torch", "ninja", "cmake>=3.18"]
+build-backend = "setuptools.build_meta"
+backend-path = ["."] # Explicitly state that setup.py is in the current directory
+
+[project]
+name = "vllm-kernels"
+# The version should ideally be managed by a tool like setuptools_scm or synced with the main vllm package.
+# For now, keeping it static for this isolated build.
+version = "0.0.1"  
+description = "Core C++/CUDA kernels for the vLLM project."
+readme = "README.md"  # A simple README for vllm-kernels can be added.
+requires-python = ">=3.8"  # Moved from setup.py to here
+license = "Apache-2.0" # Use simple string for SPDX identifier
+authors = [
+    { name = "vLLM Team", email = "contact@vllm.ai" } # Placeholder
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "Programming Language :: C++",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic ::Software Development :: Libraries :: Python Modules"
+]
+
+# Runtime dependencies for vllm-kernels itself. 
+# Torch is primary, as the kernels are PyTorch extensions.
+dependencies = [
+    "torch"
+]
+
+[project.urls]
+Homepage = "https://github.com/vllm-project/vllm"
+Repository = "https://github.com/vllm-project/vllm" 
